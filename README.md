@@ -92,3 +92,22 @@ Here are some common types:
 - `kTCCServiceSystemPolicyAllFiles`: Full disk access capabilities, saved in the system-wide TCC database.
 - `kTCCServiceScreenCapture`: Screen capture capabilities, saved in the system-wide TCC database.
 
+## TCC as an attacker
+Historically, there were many TCC bypasses; some folks ([@_r3ggi](https://twitter.com/_r3ggi), [@theevilbit](https://twitter.com/theevilbit)) find issues left and right and even offer some courses on the subject; from my experience, TCC bypasses range in severity significantly, so not all bypasses are created equal.  
+As an attacker, the first thing I'd do is to see if I have `Full Disk Access` - having that means you could even edit the per-user `TCC.db` and, if you have root access - edit the system-wide database too! Here's a silly way to check if you have Full Disk Access - run the same `file` command from earlier and see if you get an error - if you don't then you probably have Full Disk Access!  
+When it comes to real bypasses, I've seen several ideas:
+1. Fooling `tccd` somehow; for example, in a vulnerability that [I reported](https://www.microsoft.com/en-us/security/blog/2022/01/10/new-macos-vulnerability-powerdir-could-lead-to-unauthorized-user-data-access/) I made the per-user `tccd` consume a different database that I plant ahead-of-time, essentially 
+2. Running code in some other approved context; for example, [injecting into Zoom](https://www.csoonline.com/article/3535789/weakness-in-zoom-for-macos-allows-local-attackers-to-hijack-camera-and-microphone.html) immidiately gets you Camera and Microphone.
+3. Running code in a pre-approved context; this is similar to the previous bulletpoint but injects into an Entitled process; some Entitlements can bypass TCC checks by-design (for instance, `tccd` obviously has `Full Disk Access` - think why it's esential and what the consequences of injecting into it would be!). I've talked about Entitlements [in the past](https://github.com/yo-yo-yo-jbo/macos_sip/) so be sure to get familiarized with the concept.
+4. Other unique ideas; for example, [using TimeMachine backups](https://theevilbit.github.io/posts/cve_2020_9771/) to read the `TCC.db` file (and other files).
+
+Note that TCC bypasses have been abused by malware in the past (e.g. Shlayer) to if you find one make sure to disclosre responsibly!
+
+## Summary
+This was an introduction blogpost to TCC, which is another macOS security mechanism.  
+While TCC can stop some attackers, it was proven in the past that it can be bypassed - I like to think of it as "defense-in-depth" that does not stand on its own.  
+Nevertheless, Apple takes TCC bypasses very seriously, and will fix those bypasses for sure if you responsibly disclose. You might even get a bounty!
+
+Stay tuned,
+
+Jonathan Bar Or
