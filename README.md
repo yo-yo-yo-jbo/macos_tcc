@@ -13,7 +13,7 @@ The user experience for that was not great - approving every little operation be
 This isn't a UAC talk (perhaps I'll do one in the future!). Apple decided to do something similar - prompting the user when some application is going to access private data. However, Apple had a slightly different approach, as they decided to *persistently keep the user's choice*.  
 That's excellent from a user-experience perspective, since the user has to approve only *once*, and then that choice is used forever (or until the user decides to reset their choice manually). However, that means that the persistence of user's choice is the obvious target for attackers, and that's what we'll be examining today!
 
-## Persistence of user's choice
+## Experimenting with TCC
 In macOS, you'll normally see two instances of a daemon called `tccd` - one runs as root with the "system" argument, and one runs per logged-in-user:
 
 ```shell
@@ -78,3 +78,17 @@ Your output might be a bit different based on the system-wide `TCC.db` state, of
 - `csreq` is a cryptographic blob that identifies the `client` - otherwise, anyone would be able to name their App with a specific reverse-DNS name and "inherit" the TCC entry.
 
 There are other fields, but those are the ones that are relevant for this blogpost.
+
+The per-user `TCC.db` file has the same schema but will commonly have different service types.  
+Some service types are saved per-user (e.g. camera access) and some are global and will therefore persist in the system-wide `TCC.db` (e.g. Full Disk Access).  
+Here are some common types:
+- `kTCCServiceLiverpool`: Location services access, saved in the user-specific TCC database.
+- `kTCCServiceUbiquity`: iCloud access, saved in the user-specific TCC database.
+- `kTCCServiceSystemPolicyDesktopFolder`:	Desktop folder access, saved in the user-specific TCC database.
+- `kTCCServiceCalendar`: Calendar access, saved in the user-specific TCC database.
+- `kTCCServiceReminders`: Access to reminders, saved in the user-specific TCC database.
+- `kTCCServiceMicrophone`: Microphone access, saved in the user-specific TCC database.
+- `kTCCServiceCamera`: Camera access, saved in the user-specific TCC database.
+- `kTCCServiceSystemPolicyAllFiles`: Full disk access capabilities, saved in the system-wide TCC database.
+- `kTCCServiceScreenCapture`: Screen capture capabilities, saved in the system-wide TCC database.
+
