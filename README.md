@@ -48,7 +48,7 @@ jbo@McJbo ~ %
 Note how we didn't even need to try and run as root. Since it's a SQLite database, we could simply use the `sqlite3` utility to read the database:
 
 ```shell
-bo@McJbo ~ % sqlite3 "/Library/Application Support/com.apple.TCC/TCC.db"
+jbo@McJbo ~ % sqlite3 "/Library/Application Support/com.apple.TCC/TCC.db"
 SQLite version 3.36.0 2021-06-18 18:36:39
 Enter ".help" for usage hints.
 sqlite> .dump access
