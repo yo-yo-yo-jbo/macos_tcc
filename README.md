@@ -71,10 +71,10 @@ jbo@McJbo ~ %
 
 Your output might be a bit different based on the system-wide `TCC.db` state, of course. Let's talk about the interesting bits:
 - `service` is the type of access request; it'll start with `kTCCService`. There are many predefined types, and with each OS build it seems Apple adds more fine-grained TCC access request types.
-- `client` is the client; it can be either the reverse-DNS macOS App name or a path.
-- `client_type` is the type of client (e.g. App or simple executable file).
-- `auth_value` is whether the request should be approved or denied.
-- `auth_reason` is an enum specifying the reason behind the decision.
+- `client` is the client; it can be either the reverse-DNS macOS bundle name or a path.
+- `client_type` is the type of client (`0` if for a bundle, `1` is for a path).
+- `auth_value` is whether the request should be approved (`2`) or denied (`0`). There are also other values: `1` for unknown and `3` for limited.
+- `auth_reason` is an enum specifying the reason behind the decision; will commonly be "User Set".
 - `csreq` is a cryptographic blob that identifies the `client` - otherwise, anyone would be able to name their App with a specific reverse-DNS name and "inherit" the TCC entry.
 
 There are other fields, but those are the ones that are relevant for this blogpost.
@@ -101,7 +101,7 @@ When it comes to real bypasses, I've seen several ideas:
 3. Running code in a pre-approved context; this is similar to the previous bulletpoint but injects into an Entitled process; some Entitlements can bypass TCC checks by-design (for instance, `tccd` obviously has `Full Disk Access` - think why it's esential and what the consequences of injecting into it would be!). I've talked about Entitlements [in the past](https://github.com/yo-yo-yo-jbo/macos_sip/) so be sure to get familiarized with the concept.
 4. Other unique ideas; for example, [using TimeMachine backups](https://theevilbit.github.io/posts/cve_2020_9771/) to read the `TCC.db` file (and other files).
 
-Note that TCC bypasses have been abused by malware in the past (e.g. Shlayer) to if you find one make sure to disclosre responsibly!
+Note that TCC bypasses have been abused by malware in the past (e.g. [here](https://www.jamf.com/blog/zero-day-tcc-bypass-discovered-in-xcsset-malware/)), so if you find one make sure to disclosre responsibly!
 
 ## Summary
 This was an introduction blogpost to TCC, which is another macOS security mechanism.  
